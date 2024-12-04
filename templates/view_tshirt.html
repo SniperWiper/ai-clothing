@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Change Product Image Color w JavaScript</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <script defer src="{{ url_for('static', filename='js/script.js') }}"></script>
+  </head>
+
+  <body>
+    <div class="product">
+      <img src="{{ url_for('static', filename='images/shirt.png') }}" class="img-1" />
+      <img src="{{ url_for('static', filename='images/shirt2.png') }}" class="img-2" />
+      <div class="color"></div>
+    
+      <!-- Directly position the small box image -->
+      <img id="designImage" src="" alt="Design Image" class="design-img" />
+    </div>
+    
+    <div>
+      <h1>Custom Designed Cotton T-Shirt </h1>
+      <p>
+        <ul>
+          <li>Made from 100% ring-spun US cotton for long-lasting comfort.</li>
+          <li>Medium-weight fabric (6.1 oz/yd²) ideal for everyday wear.</li>
+          <li>Relaxed fit for both casual and semi-formal settings.</li>
+          <li>Classic crew neckline for a neat, versatile look.</li>
+          <li>Pre-shrunk fabric ensures a consistent fit after washing.</li>
+          <li>Available in 58 vibrant colors, offering something for everyone.</li>
+          <li>Ethically produced with US cotton, supporting sustainable practices.</li>
+        </ul>
+      </p>
+      <b>Customize shirt color: </b>
+      <select class="color-select">
+        <option value="#FFFFFF">White</option>
+        <option value="#535353">Graphite</option>
+        <option value="#6B6B6B">Pepper</option>
+        <option value="#8B9A56">Sage</option>
+        <option value="#808080">Grey</option>
+        <option value="#4B4B4B">Granite</option>
+        <option value="#000000">Black</option>
+        <option value="#FF0000">Red</option>
+        <option value="#9F2B2B">Chili</option>
+        <option value="#9F2B2B">Brick</option>
+        <option value="#3B2F2F">Espresso</option>
+        <option value="#FFFFF0">Ivory</option>
+        <option value="#C3B091">Khaki</option>
+        <option value="#FF6F61">Bright Salmon</option>
+        <option value="#E2725B">Terracotta</option>
+        <option value="#CC5500">Burnt Orange</option>
+        <option value="#FF9E57">Melon</option>
+        <option value="#FFBB33">Citrus</option>
+        <option value="#FFDB58">Mustard</option>
+        <option value="#FFE135">Banana</option>
+        <option value="#F6E3B4">Butter</option>
+        <option value="#8A7F4D">Hemp</option>
+        <option value="#6A4E3A">Bay</option>
+        <option value="#90EE90">Light Green</option>
+        <option value="#6FD7B9">Island Reef</option>
+        <option value="#8A9A5B">Moss</option>
+        <option value="#00A86B">Island Green</option>
+        <option value="#7CFC00">Grass</option>
+        <option value="#9FE2BF">Seafoam</option>
+        <option value="#006F7A">Lagoon Blue</option>
+        <option value="#99FFFF">Ice Blue</option>
+        <option value="#5A6E7F">Chambray</option>
+        <option value="#0A4D63">Blue Spruce</option>
+        <option value="#9AC4A2">Chalky Mint</option>
+        <option value="#0077B6">Topaz Blue</option>
+        <option value="#000080">True Navy</option>
+        <option value="#5D8AA8">Blue Jean</option>
+        <option value="#0076A3">Royal Caribe</option>
+        <option value="#9AADC8">Mystic Blue</option>
+        <option value="#003B5C">China Blue</option>
+        <option value="#191970">Midnight</option>
+        <option value="#A9B2C3">Washed Denim</option>
+        <option value="#1F4D6B">Flo Blue</option>
+        <option value="#CCCCFF">Periwinkle</option>
+        <option value="#1560BD">Denim</option>
+        <option value="#000080">Navy</option>
+        <option value="#9E2A2F">Vineyard</option>
+        <option value="#DA70D6">Orchid</option>
+        <option value="#9B1B30">Berry</option>
+        <option value="#6F2DA8">Grape</option>
+        <option value="#8A2BE2">Violet</option>
+        <option value="#FFB7C5">Blossom</option>
+        <option value="#9B1B30">Crunchberry</option>
+        <option value="#F1A7A6">Peony</option>
+        <option value="#FC6C85">Watermelon</option>
+        <option value="#9E5B40">Cumin</option>
+        <option value="#E35D5B">Yam</option>
+        <option value="#DC143C">Crimson</option>
+      </select>
+      <!-- Download button -->
+      <button id="downloadImageBtn">Download Design Image</button>
+    </div>
+  </body>
+</html>

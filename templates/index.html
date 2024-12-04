@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Generator & Background Removal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align items at the top */
+            height: 100vh;
+            overflow-y: auto; /* Enable vertical scrolling */
+        }
+        .container {
+            text-align: center;
+            background: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+            width: 80%; /* Make the container wider */
+            max-width: 900px;
+            overflow: hidden;
+        }
+        h1 {
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            color: #333;
+        }
+        img {
+            max-width: 80%; /* Adjust image size */
+            height: auto;
+            margin: 20px 0;
+            border-radius: 8px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 1rem;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+
+        /* Spinner styles */
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #4CAF50;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            display: none;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .spinner.show {
+            display: block;
+        }
+
+        /* Action buttons container */
+        #actions {
+            display: none;
+            margin-top: 20px;
+        }
+
+        /* Flex layout for actions */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .action-buttons button {
+            width: 150px; /* Set button width */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Image Generator & Background Removal</h1>
+        <form id="generateForm">
+            <input type="text" id="prompt" placeholder="Enter a prompt" required style="padding: 10px; width: 70%; max-width: 500px; font-size: 1.2rem;">
+            <button type="submit">Generate Image</button>
+        </form>
+        <div class="spinner" id="spinner"></div>
+        <img id="generatedImage" src="" alt="Generated Image">
+        <div id="actions">
+            <div class="action-buttons">
+                <button id="removeBackground">Remove Background</button>
+                <button id="download">View T-Shirt</button>
+                <button id="redo">Redo</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('generateForm');
+        const generatedImage = document.getElementById('generatedImage');
+        const actions = document.getElementById('actions');
+        const removeBackgroundBtn = document.getElementById('removeBackground');
+        const downloadBtn = document.getElementById('download');
+        const redoBtn = document.getElementById('redo');
+        const spinner = document.getElementById('spinner');
+        let currentFilename = '';
+        let backgroundRemovedImageURL = ''; // Store the background removed version URL
+        let originalImageURL = ''; // Store the original image URL
+    
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const prompt = document.getElementById('prompt').value;
+    
+            // Show spinner while waiting
+            spinner.classList.add('show');
+    
+            const response = await fetch('/generate_image', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt }),
+            });
+            const data = await response.json();
+    
+            // Hide spinner after response
+            spinner.classList.remove('show');
+    
+            if (data.image_path) {
+                currentFilename = data.image_path;
+                originalImageURL = `/download/${currentFilename}?${Date.now()}`; // Append timestamp to avoid caching
+    
+                // Reset the image source and hide it first, to force the browser to reload the image
+                generatedImage.src = '';
+                generatedImage.style.display = 'none';
+    
+                // After resetting, update the image source and display it again
+                setTimeout(() => {
+                    generatedImage.src = originalImageURL;
+                    generatedImage.style.display = 'block'; // Show the generated image
+                }, 100); // Small delay to ensure the image gets reloaded
+    
+                actions.style.display = 'block'; // Show action buttons
+            } else {
+                alert('Error generating image: ' + data.error);
+            }
+        });
+    
+        removeBackgroundBtn.addEventListener('click', async () => {
+            // Show spinner while waiting
+            spinner.classList.add('show');
+    
+            const response = await fetch(`/remove_background/${currentFilename}`, { method: 'POST' });
+    
+            // Hide spinner after response
+            spinner.classList.remove('show');
+    
+            if (response.ok) {
+                const blob = await response.blob();
+                backgroundRemovedImageURL = URL.createObjectURL(blob); // Save the background removed image
+                generatedImage.src = backgroundRemovedImageURL;
+                generatedImage.style.display = 'block'; // Show the background-removed image
+            } else {
+                alert('Error removing background');
+            }
+        });
+    
+        downloadBtn.addEventListener('click', () => {
+            // Download the currently displayed version (with or without background)
+            const downloadURL =
+                generatedImage.src === backgroundRemovedImageURL && backgroundRemovedImageURL
+                    ? backgroundRemovedImageURL
+                    : originalImageURL;
+    
+                    if (downloadURL) {
+                        const redirectURL = `/view_tshirt?downloadURL=${encodeURIComponent(downloadURL)}`;
+                        window.location.href = redirectURL;
+
+                    } else {
+                        alert('No image available to download.');
+                    }
+
+        });
+    
+        redoBtn.addEventListener('click', () => {
+            // Show the original image when redo is clicked
+            generatedImage.src = originalImageURL;
+            generatedImage.style.display = 'block'; // Ensure the original image is visible
+            actions.style.display = 'block'; // Show action buttons again
+        });
+    </script>        
+</body>
+</html>
